@@ -9,8 +9,12 @@ public class PlayerFatness : MonoBehaviour
     private Vector3 originalScale;
     private float previousFatnessLevel;
 
+    private AudioSource audioSource;
+
     void Start()
     {
+        audioSource = GetComponent<AudioSource>();
+        audioSource.loop = false;
         originalScale = transform.localScale;
         UpdateScale();
     }
@@ -39,6 +43,7 @@ public class PlayerFatness : MonoBehaviour
 
     public void RaiseFatnessLevel()
     {
+        audioSource.Play();
         fatnessLevel = Mathf.Clamp01(fatnessLevel + addFatness);
         Debug.Log($"The new fatness level is: {fatnessLevel}");
         if (fatnessLevel != previousFatnessLevel)
