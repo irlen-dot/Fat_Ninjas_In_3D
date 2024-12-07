@@ -1,6 +1,6 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
+using System.Collections.Generic;
+using System.Collections;
 
 public class SpawnPoint : MonoBehaviour
 {
@@ -8,13 +8,30 @@ public class SpawnPoint : MonoBehaviour
     [SerializeField] private int poolSize = 10;
     [SerializeField] private float spawnInterval = 3f;
     [SerializeField] private bool spawnOnStart = true;
-    [SerializeField] private Transform enemyParent;
+    private Transform enemyParent;
+    [SerializeField] private Transform routeParent;
 
+    private List<Transform> routePoints = new List<Transform>();
     private Queue<GameObject> enemyPool;
     private bool isSpawning = false;
+    private int currentRouteIndex = 0;
 
     void Start()
     {
+        // Get all route points from routeParent
+        if (routeParent != null)
+        {
+            foreach (Transform child in routeParent)
+            {
+                routePoints.Add(child);
+            }
+        }
+        else
+        {
+            Debug.LogError("Route Parent is not assigned!");
+            return;
+        }
+
         InitializePool();
         
         if (spawnOnStart)
@@ -27,18 +44,29 @@ public class SpawnPoint : MonoBehaviour
     {
         enemyPool = new Queue<GameObject>();
 
-        enemyParent = transform;
-        // if (enemyParent == null)
-        // {
-        //     enemyParent = new GameObject("EnemyPool").transform;
-        // }
+        if (enemyParent == null)
+        {
+            enemyParent = transform;
+        }
 
         for (int i = 0; i < poolSize; i++)
         {
             GameObject enemy = Instantiate(enemyPrefab, enemyParent);
+            Enemy enemyComponent = enemy.GetComponent<Enemy>();
+            
+            if (enemyComponent != null)
+            {
+                enemyComponent.SetRoutePoints(routePoints);
+            }
+            
             enemy.SetActive(false);
             enemyPool.Enqueue(enemy);
         }
+    }
+
+    private void AssignRouteToEnemy(Enemy enemy)
+    {
+        enemy.SetRoutePoints(routePoints);
     }
 
     public void StartSpawning()
@@ -66,22 +94,22 @@ public class SpawnPoint : MonoBehaviour
 
     private void SpawnEnemy()
     {
-        if (enemyPool.Count == 0)
+        if (enemyPool.Count == 0 || routePoints.Count == 0)
         {
-            Debug.LogWarning("NPC pool is empty! Consider increasing pool size.");
+            Debug.LogWarning("NPC pool is empty or no route points defined!");
             return;
         }
 
         GameObject enemy = enemyPool.Dequeue();
         enemy.transform.position = transform.position;
         enemy.transform.rotation = transform.rotation;
-        enemy.SetActive(true);
-    }
 
-    private void OnDrawGizmos()
-    {
-        Gizmos.color = Color.red;
-        Gizmos.DrawWireSphere(transform.position, 0.5f);
-        Gizmos.DrawRay(transform.position, transform.forward * 2f);
+        Enemy enemyComponent = enemy.GetComponent<Enemy>();
+        if (enemyComponent != null)
+        {
+            AssignRouteToEnemy(enemyComponent);
+        }
+
+        enemy.SetActive(true);
     }
 }
