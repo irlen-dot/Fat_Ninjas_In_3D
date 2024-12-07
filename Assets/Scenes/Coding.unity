@@ -465,6 +465,32 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &1296705182 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8104041897329287298, guid: 48ed87434d3d8764889d7723a24677a2, type: 3}
+  m_PrefabInstance: {fileID: 4510274151428442926}
+  m_PrefabAsset: {fileID: 0}
+--- !u!65 &1296705188
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1296705182}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 1, y: 1, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!4 &1403605636 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 5350582024201478970, guid: 9e406b7aae91f984da16f188005a3bb1, type: 3}
@@ -699,7 +725,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 2636574093479414828, guid: 48ed87434d3d8764889d7723a24677a2, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 2.980647
+      value: 0.44
       objectReference: {fileID: 0}
     - target: {fileID: 2636574093479414828, guid: 48ed87434d3d8764889d7723a24677a2, type: 3}
       propertyPath: m_LocalPosition.y
@@ -741,10 +767,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: Player
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 8104041897329287298, guid: 48ed87434d3d8764889d7723a24677a2, type: 3}
+      propertyPath: m_TagString
+      value: Player
+      objectReference: {fileID: 0}
+    m_RemovedComponents:
+    - {fileID: 2622159658328181542, guid: 48ed87434d3d8764889d7723a24677a2, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 8104041897329287298, guid: 48ed87434d3d8764889d7723a24677a2, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1296705188}
   m_SourcePrefab: {fileID: 100100000, guid: 48ed87434d3d8764889d7723a24677a2, type: 3}
 --- !u!1001 &6599398609422489574
 PrefabInstance:
@@ -758,6 +792,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Ground
       objectReference: {fileID: 0}
+    - target: {fileID: 7898430615366964469, guid: 167ba19acc806dc41b370755188ae9fb, type: 3}
+      propertyPath: m_NavMeshData
+      value: 
+      objectReference: {fileID: 23800000, guid: e161c26f1f83ef64096aeb88beb213a5, type: 2}
     - target: {fileID: 8001852941151476346, guid: 167ba19acc806dc41b370755188ae9fb, type: 3}
       propertyPath: m_LocalPosition.x
       value: 0

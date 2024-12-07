@@ -14,6 +14,7 @@ GameObject:
   - component: {fileID: 3347168394503832962}
   - component: {fileID: 3183763805997586622}
   - component: {fileID: 5272114194838776693}
+  - component: {fileID: 4640717948073102340}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -143,3 +144,28 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 492fb521fced695419de477351a95c9f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  waitTime: 2
+--- !u!114 &4640717948073102340
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8588214433365419690}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 664084adb0bd5124681615c156478a2c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  viewRadius: 8
+  viewAngle: 90
+  detectionTime: 1
+  targetMask:
+    serializedVersion: 2
+    m_Bits: 0
+  obstacleMask:
+    serializedVersion: 2
+    m_Bits: 0
+  maxAlertLevel: 100
+  alertIncreaseSpeed: 50
+  alertDecreaseSpeed: 25

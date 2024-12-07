@@ -58,7 +58,6 @@ public class Enemy : MonoBehaviour
             currentPointIndex = 0;
         }
 
-        Debug.Log($"The current directions is: {routePoints[currentPointIndex]}");
 
         if (routePoints[currentPointIndex] != null)
         {
