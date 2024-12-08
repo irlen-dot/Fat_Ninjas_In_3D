@@ -1,6 +1,7 @@
 using UnityEngine;
 using System.Collections.Generic;
 using System.Collections;
+using UnityEditor.EditorTools;
 
 public class SpawnPoint : MonoBehaviour
 {
@@ -10,6 +11,10 @@ public class SpawnPoint : MonoBehaviour
     [SerializeField] private bool spawnOnStart = true;
     private Transform enemyParent;
     [SerializeField] private Transform routeParent;
+
+    [SerializeField]
+    [Tooltip("If the player will break the glass, will these NPCs be triggered by It?")]
+    private bool triggeredByGlass = true;
 
     private List<Transform> routePoints = new List<Transform>();
     private Queue<GameObject> enemyPool;
@@ -33,7 +38,7 @@ public class SpawnPoint : MonoBehaviour
         }
 
         InitializePool();
-        
+
         if (spawnOnStart)
         {
             StartSpawning();
@@ -53,12 +58,12 @@ public class SpawnPoint : MonoBehaviour
         {
             GameObject enemy = Instantiate(enemyPrefab, enemyParent);
             Enemy enemyComponent = enemy.GetComponent<Enemy>();
-            
+            enemyComponent.IsProvokedByGlass = triggeredByGlass;
             if (enemyComponent != null)
             {
                 enemyComponent.SetRoutePoints(routePoints);
             }
-            
+
             enemy.SetActive(false);
             enemyPool.Enqueue(enemy);
         }

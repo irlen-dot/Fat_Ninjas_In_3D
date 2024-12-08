@@ -44,4 +44,4 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6289f91f37be7ec479452dca285d8e3c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gizmoRadius: 2
+  gizmoRadius: 1

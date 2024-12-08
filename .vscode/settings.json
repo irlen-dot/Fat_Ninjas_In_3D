@@ -51,5 +51,6 @@
         "temp/": true,
         "Temp/": true
     },
-    "dotnet.defaultSolution": "Fat Ninjas In 3D.sln"
+    "dotnet.defaultSolution": "Fat Ninjas In 3D.sln",
+    "editor.formatOnSave": true
 }

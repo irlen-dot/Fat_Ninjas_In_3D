@@ -19,6 +19,7 @@ public class EnemyVision : MonoBehaviour
     private float currentAlertLevel = 0f;
     private bool isPlayerDetected = false;
     private Vector3 lastKnownPosition;
+    private bool isGamePaused = false;
 
     public delegate void OnPlayerDetectedHandler(Vector3 playerPosition);
     public event OnPlayerDetectedHandler OnPlayerDetected;
@@ -32,13 +33,25 @@ public class EnemyVision : MonoBehaviour
         StartCoroutine(VisionRoutine());
     }
 
+    void Update()
+    {
+        // Cheat to resume game
+        if (isGamePaused && Input.GetKeyDown(KeyCode.R))
+        {
+            ResumeGame();
+        }
+    }
+
     private IEnumerator VisionRoutine()
     {
-        WaitForSeconds wait = new WaitForSeconds(0.2f); // Check every 0.2 seconds for performance
+        WaitForSeconds wait = new WaitForSeconds(0.2f);
 
         while (true)
         {
-            CheckVision();
+            if (!isGamePaused)
+            {
+                CheckVision();
+            }
             yield return wait;
         }
     }
@@ -56,11 +69,9 @@ public class EnemyVision : MonoBehaviour
 
             if (angleToPlayer <= viewAngle / 2)
             {
-                // Check if there are obstacles between enemy and player
                 if (!Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleMask))
                 {
                     Debug.Log("Player is on sight.");
-                    // Player is in sight, increase alert level
                     IncreaseAlertLevel();
                     lastKnownPosition = player.position;
                     return;
@@ -68,20 +79,52 @@ public class EnemyVision : MonoBehaviour
             }
         }
 
-        // Player is not in sight, decrease alert level
         DecreaseAlertLevel();
     }
+
+
+    private void ResumeGame()
+    {
+        Time.timeScale = 1;
+        isGamePaused = false;
+        Debug.Log("Game Resumed");
+    }
+
 
     private void IncreaseAlertLevel()
     {
         currentAlertLevel += alertIncreaseSpeed * Time.deltaTime;
-        
+        currentAlertLevel = Mathf.Min(currentAlertLevel, maxAlertLevel); // Clamp the value
+        Debug.Log($"Alert Level: {currentAlertLevel} / {maxAlertLevel}");
+
         if (currentAlertLevel >= maxAlertLevel && !isPlayerDetected)
         {
             isPlayerDetected = true;
             OnPlayerDetected?.Invoke(lastKnownPosition);
+
+            // Check for spacebar cheat here
+            if (!Input.GetKey(KeyCode.Space))
+            {
+                PauseGame();
+                Debug.Log("Maximum alert reached - Pausing game");
+            }
+            else
+            {
+                Debug.Log("Cheat activated - Game continues!");
+            }
         }
     }
+
+    private void PauseGame()
+    {
+        if (!isGamePaused)
+        {
+            Time.timeScale = 0;
+            isGamePaused = true;
+            Debug.Log("Game Paused - Press R to resume");
+        }
+    }
+
 
     private void DecreaseAlertLevel()
     {
@@ -100,7 +143,15 @@ public class EnemyVision : MonoBehaviour
         return currentAlertLevel / maxAlertLevel;
     }
 
-    // Optional: Visualize the vision cone in the editor
+    private void OnGUI()
+    {
+        if (isGamePaused)
+        {
+            GUI.Label(new Rect(Screen.width / 2 - 100, Screen.height / 2 - 25, 200, 50),
+                     "CAUGHT! - Press 'R' to resume");
+        }
+    }
+
     private void OnDrawGizmosSelected()
     {
         Gizmos.color = Color.yellow;

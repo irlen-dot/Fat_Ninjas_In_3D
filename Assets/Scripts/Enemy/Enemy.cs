@@ -10,13 +10,25 @@ public class Enemy : MonoBehaviour
     private int currentPointIndex = 0;
     private bool isWaiting = false;
     [SerializeField] private float waitTime = 2f;
-    
+
+    public bool IsProvokedByGlass;
+    // public bool IsProvokedByGlass { set { isProvokedByGlass = value; } }
+
+
     void Start()
     {
         nav = GetComponent<NavMeshAgent>();
         if (routePoints != null && routePoints.Count > 0)
         {
             MoveToNextPoint();
+        }
+    }
+
+    public void SetTargetPosition(Vector3 position)
+    {
+        if (nav != null)
+        {
+            nav.SetDestination(position);
         }
     }
 
@@ -80,7 +92,7 @@ public class Enemy : MonoBehaviour
         nav.isStopped = false;
         currentPointIndex++;
         MoveToNextPoint();
-        
+
         isWaiting = false;
     }
 
