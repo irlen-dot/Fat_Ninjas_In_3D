@@ -9,7 +9,8 @@ public class Enemy : MonoBehaviour
     private List<Transform> routePoints = new List<Transform>();
     private int currentPointIndex = 0;
     private bool isWaiting = false;
-    [SerializeField] private float waitTime = 2f;
+    private float waitTime = 2f;
+    public float WaitTime { set { waitTime = value; } }
 
     public bool IsProvokedByGlass;
     // public bool IsProvokedByGlass { set { isProvokedByGlass = value; } }

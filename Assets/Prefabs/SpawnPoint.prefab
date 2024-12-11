@@ -45,7 +45,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   enemyPrefab: {fileID: 8588214433365419690, guid: b377bdbf6e160514ebd3112c6d111ec9, type: 3}
-  poolSize: 10
+  poolSize: 1
   spawnInterval: 3
   spawnOnStart: 1
   routeParent: {fileID: 0}
+  triggeredByGlass: 0

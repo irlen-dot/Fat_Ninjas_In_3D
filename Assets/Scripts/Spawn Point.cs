@@ -15,6 +15,7 @@ public class SpawnPoint : MonoBehaviour
     [SerializeField]
     [Tooltip("If the player will break the glass, will these NPCs be triggered by It?")]
     private bool triggeredByGlass = true;
+    [SerializeField] private float waitTime = 2f;
 
     private List<Transform> routePoints = new List<Transform>();
     private Queue<GameObject> enemyPool;
@@ -59,6 +60,7 @@ public class SpawnPoint : MonoBehaviour
             GameObject enemy = Instantiate(enemyPrefab, enemyParent);
             Enemy enemyComponent = enemy.GetComponent<Enemy>();
             enemyComponent.IsProvokedByGlass = triggeredByGlass;
+            enemyComponent.WaitTime = waitTime;
             if (enemyComponent != null)
             {
                 enemyComponent.SetRoutePoints(routePoints);
