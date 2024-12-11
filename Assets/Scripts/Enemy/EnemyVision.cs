@@ -27,10 +27,26 @@ public class EnemyVision : MonoBehaviour
     public delegate void OnPlayerLostHandler();
     public event OnPlayerLostHandler OnPlayerLost;
 
+    [Header("Light Settings")]
+    [SerializeField] private Light spotLight;
+    [SerializeField] private float lightIntensity = 2f;
+
     void Start()
     {
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         StartCoroutine(VisionRoutine());
+
+        // Setup spotlight if not assigned
+        if (spotLight == null)
+        {
+            spotLight = gameObject.AddComponent<Light>();
+            spotLight.type = LightType.Spot;
+            spotLight.intensity = lightIntensity;
+            spotLight.range = viewRadius;
+            spotLight.spotAngle = viewAngle;
+            spotLight.color = Color.white;
+            spotLight.shadows = LightShadows.Hard;
+        }
     }
 
     void Update()

@@ -16,6 +16,8 @@ public class SpawnPoint : MonoBehaviour
     [Tooltip("If the player will break the glass, will these NPCs be triggered by It?")]
     private bool triggeredByGlass = true;
     [SerializeField] private float waitTime = 2f;
+    [SerializeField] private Color gizmosColor = Color.red;
+
 
     private List<Transform> routePoints = new List<Transform>();
     private Queue<GameObject> enemyPool;
@@ -118,5 +120,17 @@ public class SpawnPoint : MonoBehaviour
         }
 
         enemy.SetActive(true);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = gizmosColor;
+        Gizmos.DrawWireSphere(transform.position, 1f);
+    }
+
+    private void OnDrawGizmosSelected()
+    {
+        Gizmos.color = gizmosColor;
+        Gizmos.DrawWireSphere(transform.position, 1f);
     }
 }

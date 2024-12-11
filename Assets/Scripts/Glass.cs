@@ -24,30 +24,68 @@ public class Glass : MonoBehaviour
         }
     }
 
-    void OnControllerCollider(ControllerColliderHit hit)
+
+    // private void OnControllerColliderHit(ControllerColliderHit hit)
+    // {
+    //     // Debug.Log("");
+    //     Debug.Log("Is collided bro");
+    //     if (hit.gameObject.CompareTag("Player") && !isBroken)
+    //     {
+    //         if (audioSource != null)
+    //         {
+    //             Debug.Log($"Mute: {audioSource.mute}");
+    //             audioSource.PlayOneShot(audioSource.clip); // Use PlayOneShot instead of Play()
+    //             Debug.Log($"Audio is playing: {audioSource.isPlaying}");
+    //             // gameObject.SetActive(false);
+    //             meshRenderer.enabled = false;
+    //             isBroken = true;
+    //             boxCollider.enabled = false;
+    //             // box
+    //         }
+    //         AlertNPCs();
+    //     }
+
+    // }
+
+    // void OnCollisionEnter(Collision collision)
+    // {
+    //     Debug.Log("Is collided bro");
+    //     if (collision.gameObject.CompareTag("Player") && !isBroken)
+    //     {
+    //         if (audioSource != null)
+    //         {
+    //             Debug.Log($"Mute: {audioSource.mute}");
+    //             audioSource.PlayOneShot(audioSource.clip); // Use PlayOneShot instead of Play()
+    //             Debug.Log($"Audio is playing: {audioSource.isPlaying}");
+    //             // gameObject.SetActive(false);
+    //             meshRenderer.enabled = false;
+    //             isBroken = true;
+    //             boxCollider.enabled = false;
+    //             // box
+    //         }
+    //         AlertNPCs();
+    //     }
+    // }
+
+    public void TriggerGlassBreakage()
     {
-        // Debug.Log()
-        if (hit.gameObject.CompareTag("Player") && !isBroken)
+        if (audioSource != null)
         {
-            Debug.Log("Is collided bro");
-            if (audioSource != null)
-            {
-                Debug.Log($"Mute: {audioSource.mute}");
-                audioSource.PlayOneShot(audioSource.clip); // Use PlayOneShot instead of Play()
-                Debug.Log($"Audio is playing: {audioSource.isPlaying}");
-                // gameObject.SetActive(false);
-                meshRenderer.enabled = false;
-                isBroken = true;
-                boxCollider.enabled = false;
-                // box
-            }
-            AlertNPCs();
+            Debug.Log($"Mute: {audioSource.mute}");
+
+            audioSource.PlayOneShot(audioSource.clip); // Use PlayOneShot instead of Play()
+
+            Debug.Log($"Audio is playing: {audioSource.isPlaying}");
+
+            // gameObject.SetActive(false);
+
+            meshRenderer.enabled = false;
+            isBroken = true;
+            boxCollider.enabled = false;
+            // box
         }
+        AlertNPCs();
 
-    }
-
-    void OnCollisionEnter(Collision collision)
-    {
     }
 
     private IEnumerator DisableAfterSound()
