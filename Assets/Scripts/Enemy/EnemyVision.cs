@@ -15,6 +15,9 @@ public class EnemyVision : MonoBehaviour
     [SerializeField] private float alertIncreaseSpeed = 50f;
     [SerializeField] private float alertDecreaseSpeed = 25f;
 
+    [Header("Vision Visualization")]
+    [SerializeField] private CircleMesh visionMesh;
+
     private Transform player;
     private float currentAlertLevel = 0f;
     private bool isPlayerDetected = false;
@@ -36,23 +39,83 @@ public class EnemyVision : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         StartCoroutine(VisionRoutine());
 
+        // Initialize vision mesh if not set
+        if (visionMesh == null)
+        {
+            GameObject visionObject = new GameObject("VisionMesh");
+            visionObject.transform.parent = transform;
+            visionObject.transform.localPosition = Vector3.zero;
+            visionObject.transform.localRotation = Quaternion.Euler(-90, 0, 0); // Rotate to face forward
+            visionMesh = visionObject.AddComponent<CircleMesh>();
+
+            // Add MeshRenderer and set material
+            MeshRenderer meshRenderer = visionObject.GetComponent<MeshRenderer>();
+            meshRenderer.material = new Material(Shader.Find("Standard"));
+            meshRenderer.material.color = new Color(1f, 1f, 0f, 0.3f); // Semi-transparent yellow
+        }
+
+        // Update vision mesh parameters
+        UpdateVisionMesh();
+        InitializeSpotLight();
+    }
+
+    private void UpdateVisionMesh()
+    {
+        if (visionMesh != null)
+        {
+            // Set the properties
+            visionMesh.radius = viewRadius;
+            visionMesh.segments = 32;
+            visionMesh.startAngle = -viewAngle / 2;
+            visionMesh.endAngle = viewAngle / 2;
+
+            // Force mesh update
+            visionMesh.UpdateMesh(); // Add this method to your CircleMesh class
+        }
+    }
+
+    public void UpdateViewRadius(float newRadius)
+    {
+        viewRadius = newRadius;
+        UpdateVisionMesh();
+        if (spotLight != null)
+        {
+            spotLight.range = viewRadius;
+        }
+    }
+
+    public void UpdateViewAngle(float newAngle)
+    {
+        viewAngle = newAngle;
+        UpdateVisionMesh();
+        if (spotLight != null)
+        {
+            spotLight.spotAngle = viewAngle;
+        }
+    }
+
+    private void InitializeSpotLight()
+    {
         spotLight = gameObject.GetComponentInChildren<Light>();
-        spotLight.type = LightType.Spot;
-        spotLight.intensity = lightIntensity;
-        spotLight.range = viewRadius;
-        spotLight.spotAngle = viewAngle;
-        spotLight.color = Color.white;
-        spotLight.shadows = LightShadows.Hard;
+        if (spotLight != null)
+        {
+            spotLight.type = LightType.Spot;
+            spotLight.intensity = lightIntensity;
+            spotLight.range = viewRadius;
+            spotLight.spotAngle = viewAngle;
+            spotLight.color = Color.white;
+            spotLight.shadows = LightShadows.Hard;
+        }
     }
 
     void Update()
     {
-        // Cheat to resume game
         if (isGamePaused && Input.GetKeyDown(KeyCode.R))
         {
             ResumeGame();
         }
     }
+
 
     public bool AlertOnVisibility()
     {
