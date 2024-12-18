@@ -26,9 +26,9 @@ public class EnemyVision : MonoBehaviour
 
     public delegate void OnPlayerLostHandler();
     public event OnPlayerLostHandler OnPlayerLost;
+    private Light spotLight;
 
     [Header("Light Settings")]
-    [SerializeField] private Light spotLight;
     [SerializeField] private float lightIntensity = 2f;
 
     void Start()
@@ -36,17 +36,13 @@ public class EnemyVision : MonoBehaviour
         player = GameObject.FindGameObjectWithTag("Player")?.transform;
         StartCoroutine(VisionRoutine());
 
-        // Setup spotlight if not assigned
-        if (spotLight == null)
-        {
-            spotLight = gameObject.AddComponent<Light>();
-            spotLight.type = LightType.Spot;
-            spotLight.intensity = lightIntensity;
-            spotLight.range = viewRadius;
-            spotLight.spotAngle = viewAngle;
-            spotLight.color = Color.white;
-            spotLight.shadows = LightShadows.Hard;
-        }
+        spotLight = gameObject.GetComponentInChildren<Light>();
+        spotLight.type = LightType.Spot;
+        spotLight.intensity = lightIntensity;
+        spotLight.range = viewRadius;
+        spotLight.spotAngle = viewAngle;
+        spotLight.color = Color.white;
+        spotLight.shadows = LightShadows.Hard;
     }
 
     void Update()
@@ -56,6 +52,20 @@ public class EnemyVision : MonoBehaviour
         {
             ResumeGame();
         }
+    }
+
+    public bool AlertOnVisibility()
+    {
+        var (isVisible, _, _) = CheckExtendedVision();
+
+        if (isVisible)
+        {
+            IncreaseAlertLevel();
+            lastKnownPosition = player.position;
+            return true;
+        }
+
+        return false;
     }
 
     private IEnumerator VisionRoutine()
@@ -89,6 +99,7 @@ public class EnemyVision : MonoBehaviour
                 {
                     Debug.Log("Player is on sight.");
                     IncreaseAlertLevel();
+                    PauseGame();
                     lastKnownPosition = player.position;
                     return;
                 }
@@ -96,6 +107,30 @@ public class EnemyVision : MonoBehaviour
         }
 
         DecreaseAlertLevel();
+    }
+
+    private (bool isVisible, float distance, bool isInRange) CheckExtendedVision()
+    {
+        if (player == null)
+            return (false, 0f, false);
+
+        Vector3 directionToPlayer = (player.position - transform.position).normalized;
+        float distanceToPlayer = Vector3.Distance(transform.position, player.position);
+        float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+
+        bool isInViewAngle = angleToPlayer <= viewAngle / 2;
+        bool hasLineOfSight = !Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleMask);
+        bool isInRange = distanceToPlayer <= viewRadius;
+
+        bool isVisible = isInViewAngle && hasLineOfSight;
+
+        if (isVisible)
+        {
+            Debug.Log($"Extended Vision - Player spotted at distance: {distanceToPlayer:F2}" +
+                     $"{(isInRange ? " (In Range)" : " (Out of Range)")}");
+        }
+
+        return (isVisible, distanceToPlayer, isInRange);
     }
 
 

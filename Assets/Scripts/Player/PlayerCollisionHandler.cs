@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class PlayerCollisionHandler : MonoBehaviour
 {
@@ -24,5 +25,15 @@ public class PlayerCollisionHandler : MonoBehaviour
         {
             hit.gameObject.GetComponent<Glass>().TriggerGlassBreakage();
         }
+        if (hit.gameObject.tag.Equals(""))
+        {
+
+        }
+    }
+
+
+    void OnTriggerEnter(Collider other)
+    {
+        Debug.Log($"Bro is triggered {other.gameObject.tag}");
     }
 }

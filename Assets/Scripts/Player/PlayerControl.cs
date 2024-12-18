@@ -36,7 +36,6 @@ public class PlayerControl : MonoBehaviour
         move.y = 0f;
         controller.Move(move * Time.deltaTime * playerSpeed);
 
-
         // Makes the player jump
         if (jumpControl.action.triggered && groundedPlayer)
         {
