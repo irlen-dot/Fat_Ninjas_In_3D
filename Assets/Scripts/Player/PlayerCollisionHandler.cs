@@ -1,11 +1,11 @@
-using System.Collections;
-using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class PlayerCollisionHandler : MonoBehaviour
 {
+    private bool underTrapLight = false;
+    public bool UnderTrapLight { get { return underTrapLight; } }
+
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,15 +25,23 @@ public class PlayerCollisionHandler : MonoBehaviour
         {
             hit.gameObject.GetComponent<Glass>().TriggerGlassBreakage();
         }
-        if (hit.gameObject.tag.Equals(""))
-        {
-
-        }
     }
 
 
     void OnTriggerEnter(Collider other)
     {
-        Debug.Log($"Bro is triggered {other.gameObject.tag}");
+        if (other.tag.Equals("Trap Light"))
+        {
+            underTrapLight = true;
+            Debug.Log($"You are under the light: {underTrapLight}");
+        }
+    }
+
+    void OnTriggerExit(Collider other)
+    {
+        if (other.tag.Equals("Trap Light"))
+        {
+            underTrapLight = false;
+        }
     }
 }

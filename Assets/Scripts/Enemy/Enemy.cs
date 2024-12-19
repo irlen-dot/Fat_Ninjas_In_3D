@@ -10,6 +10,7 @@ public class Enemy : MonoBehaviour
     [SerializeField] private Color routeColor = Color.yellow;
     [SerializeField] private Color pointColor = Color.red;
     [SerializeField] private float pointSize = 0.5f;
+    private Coroutine investigationCoroutine;
     private NavMeshAgent nav;
     private List<Transform> routePoints = new List<Transform>();
     private int currentPointIndex = 0;
@@ -43,7 +44,14 @@ public class Enemy : MonoBehaviour
         if (waitCoroutine != null)
         {
             StopCoroutine(waitCoroutine);
-            waitCoroutine = null;  // Clear the reference
+            waitCoroutine = null;
+        }
+
+        // Stop any current investigation
+        if (investigationCoroutine != null)
+        {
+            StopCoroutine(investigationCoroutine);
+            investigationCoroutine = null;
         }
 
         // Reset waiting state
@@ -53,7 +61,7 @@ public class Enemy : MonoBehaviour
         investigationPoints = new List<Transform>(points);
         currentInvestigationIndex = 0;
         isInvestigating = true;
-        isRespondingToGlass = true;  // Set this to true when investigating
+        isRespondingToGlass = true;
 
         // Start investigating
         MoveToNextInvestigationPoint();
@@ -92,6 +100,12 @@ public class Enemy : MonoBehaviour
             waitCoroutine = null;
         }
 
+        if (investigationCoroutine != null)
+        {
+            StopCoroutine(investigationCoroutine);
+            investigationCoroutine = null;
+        }
+
         // Resume patrol
         if (routePoints.Count > 0)
         {
@@ -103,6 +117,7 @@ public class Enemy : MonoBehaviour
     {
         yield return new WaitForSeconds(waitTime);
         currentInvestigationIndex++;
+        investigationCoroutine = null;  // Clear the reference
         MoveToNextInvestigationPoint();
     }
 
@@ -129,9 +144,9 @@ public class Enemy : MonoBehaviour
     {
         if (!nav.pathPending && nav.remainingDistance <= nav.stoppingDistance)
         {
-            if (isInvestigating)
+            if (isInvestigating && investigationCoroutine == null)
             {
-                StartCoroutine(WaitAndMoveToNextInvestigationPoint());
+                investigationCoroutine = StartCoroutine(WaitAndMoveToNextInvestigationPoint());
             }
             else if (!isWaiting && !isInvestigating && routePoints != null && routePoints.Count > 0)
             {

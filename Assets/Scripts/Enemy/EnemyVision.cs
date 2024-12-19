@@ -1,14 +1,17 @@
 using UnityEngine;
 using System.Collections;
+using System.Runtime.CompilerServices;
 
 public class EnemyVision : MonoBehaviour
 {
     [Header("Vision Parameters")]
+
     [SerializeField] private float viewRadius = 8f;
     [SerializeField] private float viewAngle = 90f;
     [SerializeField] private float detectionTime = 1f;
     [SerializeField] private LayerMask targetMask;
     [SerializeField] private LayerMask obstacleMask;
+    [SerializeField] private bool affectedByTrapLight = true;
 
     [Header("Detection Indicators")]
     [SerializeField] private float maxAlertLevel = 100f;
@@ -18,7 +21,11 @@ public class EnemyVision : MonoBehaviour
     [Header("Vision Visualization")]
     [SerializeField] private CircleMesh visionMesh;
 
+
     private Transform player;
+    private GameObject playerObj;
+    private PlayerCollisionHandler playerCollisionHandler;
+
     private float currentAlertLevel = 0f;
     private bool isPlayerDetected = false;
     private Vector3 lastKnownPosition;
@@ -36,7 +43,10 @@ public class EnemyVision : MonoBehaviour
 
     void Start()
     {
-        player = GameObject.FindGameObjectWithTag("Player")?.transform;
+        playerObj = GameObject.FindGameObjectWithTag("Player")?.gameObject;
+        player = playerObj.transform;
+        playerCollisionHandler = playerObj.GetComponent<PlayerCollisionHandler>();
+
         StartCoroutine(VisionRoutine());
 
         // Initialize vision mesh if not set
@@ -148,28 +158,51 @@ public class EnemyVision : MonoBehaviour
     private void CheckVision()
     {
         if (player == null) return;
-
         Vector3 directionToPlayer = (player.position - transform.position).normalized;
         float distanceToPlayer = Vector3.Distance(transform.position, player.position);
 
-        if (distanceToPlayer <= viewRadius)
+        if (playerCollisionHandler.UnderTrapLight && affectedByTrapLight)
         {
+            // If player is under trap light, directly check line of sight without distance restriction
             float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
-
             if (angleToPlayer <= viewAngle / 2)
             {
                 if (!Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleMask))
                 {
-                    Debug.Log("Player is on sight.");
+                    Debug.Log("Player caught by trap light!");
                     IncreaseAlertLevel();
                     PauseGame();
                     lastKnownPosition = player.position;
-                    return;
                 }
             }
         }
-
+        else
+        {
+            // Normal vision check with view radius restriction
+            if (distanceToPlayer <= viewRadius)
+            {
+                CheckPlayer(directionToPlayer, distanceToPlayer);
+            }
+        }
         DecreaseAlertLevel();
+    }
+
+
+
+    private void CheckPlayer(Vector3 directionToPlayer, float distanceToPlayer)
+    {
+        float angleToPlayer = Vector3.Angle(transform.forward, directionToPlayer);
+        if (angleToPlayer <= viewAngle / 2)
+        {
+            if (!Physics.Raycast(transform.position, directionToPlayer, distanceToPlayer, obstacleMask))
+            {
+                Debug.Log("Player is on sight.");
+                IncreaseAlertLevel();
+                PauseGame();
+                lastKnownPosition = player.position;
+                return;
+            }
+        }
     }
 
     private (bool isVisible, float distance, bool isInRange) CheckExtendedVision()
